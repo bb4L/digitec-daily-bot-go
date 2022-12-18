@@ -1,0 +1,1 @@
+# digitec-daily-bot-go
