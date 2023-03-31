@@ -25,7 +25,7 @@ func main() {
 	offerChannel := make(chan string)
 	mongoDbConnectionString := os.Getenv("MongoDB")
 	var mongoDBFlag string
-	flag.StringVar(&mongoDBFlag, "db", "none", "Specify the mongoDB connection string, it overrides the envirnoment variabel \"MongoDB\".")
+	flag.StringVar(&mongoDBFlag, "db", "none", "Specify the mongoDB connection string, it overrides the environment variable \"MongoDB\".")
 
 	if mongoDbConnectionString == "" && mongoDBFlag == "none" {
 		logger.Panicln("mongo db connection string not set please set env variable \"MongoDB\"")

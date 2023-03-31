@@ -16,7 +16,7 @@ import (
 var logger = log.New(os.Stdout, "[task] ", log.Ldate|log.Ltime|log.Lmsgprefix)
 var dailyOfferChannel chan string
 
-// default values will be overriden with [SetupValues]
+// default values will be overridden with [SetupValues]
 var OFFFER_TEMPLATE_STRING = ""
 var URL = ""
 
