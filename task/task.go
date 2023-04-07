@@ -77,35 +77,35 @@ func parseDailyOffer() (dailyOffer, error) {
 
 	c := colly.NewCollector()
 
-	c.OnHTML("article.sc-v6swez-1.cpZwnD", func(e *colly.HTMLElement) {
+	c.OnHTML("article", func(e *colly.HTMLElement) {
 		e.ForEach(
 			"a", func(i int, h *colly.HTMLElement) {
 				href := h.Attr("href")
-				if strings.HasPrefix(href, "/en/product/") {
+				if strings.HasPrefix(href, "/en/product/") && offer.URL == "" {
 					offer.URL = "https://digitec.ch" + href
 				}
 			},
 		)
-	})
-
-	c.OnHTML("div.sc-v6swez-4.gSBxIL", func(e *colly.HTMLElement) {
 		e.ForEach(
-			"p", func(i int, h *colly.HTMLElement) {
-				if i == 0 {
-					offer.ItemName = h.Text
+			"img", func(i int, h *colly.HTMLElement) {
+				if offer.ItemName == "" {
+					offer.ItemName = h.Attr("alt")
 				}
 			},
 		)
-
-		e.ForEach(
-			"div", func(i int, h *colly.HTMLElement) {
-				if strings.Contains(h.Text, "was") {
-					priceInformation := strings.Replace(h.Text, "was", " was", -1)
-					offer.PriceInformation = priceInformation
-				}
-			},
+		e.ForEach("div", func(i int, h *colly.HTMLElement) {
+			if strings.Contains(h.Text, ".–") && offer.PriceInformation == "" {
+				h.ForEach("div", func(i int, h *colly.HTMLElement) {
+					h.ForEach("div", func(i int, h *colly.HTMLElement) {
+						if (strings.Contains(h.Text, ".–") || strings.Contains(h.Text, "was")) && offer.PriceInformation == "" {
+							priceInformation := strings.Replace(h.Text, "was", " was", -1)
+							offer.PriceInformation = priceInformation
+						}
+					})
+				})
+			}
+		},
 		)
-
 	})
 
 	c.OnRequest(func(r *colly.Request) {
@@ -115,5 +115,9 @@ func parseDailyOffer() (dailyOffer, error) {
 	c.Visit(URL)
 
 	logger.Println("found offer ", offer)
-	return offer, nil
+	var err error
+	if offer.ItemName == "" || offer.PriceInformation == "" || offer.URL == "" {
+		err = fmt.Errorf("could not retrieve all values %s", offer)
+	}
+	return offer, err
 }
