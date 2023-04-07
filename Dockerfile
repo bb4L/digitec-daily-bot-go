@@ -13,6 +13,6 @@ RUN go build -o digitec-daily-bot
 
 FROM alpine:3.16 as production
 
-COPY --from=builder digitec-daily-bot .
+COPY --from=builder digitec_daily_bot/digitec-daily-bot .
 
 CMD ./digitec-daily-bot
