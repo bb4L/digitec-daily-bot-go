@@ -8,6 +8,8 @@ import (
 	"strings"
 	"time"
 
+	_ "time/tzdata"
+
 	"github.com/bb4L/digitec-daily-bot-go/storage"
 	"github.com/gocolly/colly"
 	"github.com/robfig/cron/v3"
