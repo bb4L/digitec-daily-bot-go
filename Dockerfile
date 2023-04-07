@@ -15,4 +15,4 @@ FROM alpine:3.16 as production
 
 COPY --from=builder digitec_daily_bot .
 
-CMD ./digitec_daily_bot_amd64
+CMD ./digitec_daily_bot
