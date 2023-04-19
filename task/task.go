@@ -83,7 +83,7 @@ func parseDailyOffer() (dailyOffer, error) {
 		e.ForEach(
 			"a", func(i int, h *colly.HTMLElement) {
 				href := h.Attr("href")
-				if strings.HasPrefix(href, "/en/product/") && offer.URL == "" {
+				if strings.Contains(href, "/product/") && offer.URL == "" {
 					offer.URL = "https://digitec.ch" + href
 				}
 			},
@@ -118,8 +118,11 @@ func parseDailyOffer() (dailyOffer, error) {
 
 	logger.Println("found offer ", offer)
 	var err error
-	if offer.ItemName == "" || offer.PriceInformation == "" || offer.URL == "" {
+	if offer.ItemName == "" || offer.PriceInformation == "" {
 		err = fmt.Errorf("could not retrieve all values %s", offer)
+	}
+	if offer.URL == "" {
+		offer.URL = URL
 	}
 	return offer, err
 }
