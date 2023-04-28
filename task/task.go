@@ -104,25 +104,28 @@ func parseDailyOffer() (dailyOffer, error) {
 							offer.PriceInformation = priceInformation
 						}
 					})
+
+					if offer.PriceInformation != "" {
+						return
+					}
+
+					if strings.Contains(h.Text, "was") {
+						offer.PriceInformation = h.Text
+					}
 				})
 			}
 		},
 		)
 	})
 
-	c.OnRequest(func(r *colly.Request) {
-		logger.Println("Visiting", r.URL)
-	})
-
 	c.Visit(URL)
 
-	logger.Println("found offer ", offer)
-	var err error
-	if offer.ItemName == "" || offer.PriceInformation == "" {
-		err = fmt.Errorf("could not retrieve all values %s", offer)
+	return offer, checkOffer(offer)
+}
+
+func checkOffer(offer dailyOffer) error {
+	if !(offer.ItemName != "" && offer.PriceInformation != "" && offer.URL != "") {
+		return fmt.Errorf("could not retrieve all values %s", offer)
 	}
-	if offer.URL == "" {
-		offer.URL = URL
-	}
-	return offer, err
+	return nil
 }
